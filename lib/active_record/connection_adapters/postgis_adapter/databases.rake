@@ -44,7 +44,7 @@ end
 
 
 def create_database(config_)
-  if config_['adapter'] == 'postgis'
+  if config_['adapter'] == 'postgresql'
     @encoding = config_['encoding'] || ::ENV['CHARSET'] || 'utf8'
     begin
       has_su_ = config_.include?('su_username')            # Is there a distinct superuser?
@@ -103,7 +103,7 @@ end
 
 
 def drop_database(config_)
-  if config_['adapter'] == 'postgis'
+  if config_['adapter'] == 'postgresql'
     ::ActiveRecord::Base.establish_connection(config_.merge('database' => 'postgres', 'schema_search_path' => 'public', 'username' => config_['su_username'] || config_['username'], 'password' => config_['su_password'] || config_['password']))
     ::ActiveRecord::Base.connection.drop_database(config_['database'])
   else
@@ -112,13 +112,13 @@ def drop_database(config_)
 end
 
 
-::RGeo::ActiveRecord::TaskHacker.modify('db:charset', nil, 'postgis') do |config_|
+::RGeo::ActiveRecord::TaskHacker.modify('db:charset', nil, 'postgresql') do |config_|
   ::ActiveRecord::Base.establish_connection(config_)
   puts(::ActiveRecord::Base.connection.encoding)
 end
 
 
-::RGeo::ActiveRecord::TaskHacker.modify('db:structure:dump', nil, 'postgis') do |config_|
+::RGeo::ActiveRecord::TaskHacker.modify('db:structure:dump', nil, 'postgresql') do |config_|
   ::ENV['PGHOST'] = config_["host"] if config_["host"]
   ::ENV['PGPORT'] = config_["port"].to_s if config_["port"]
   ::ENV['PGPASSWORD'] = config_["password"].to_s if config_["password"]
@@ -132,7 +132,7 @@ end
 end
 
 
-::RGeo::ActiveRecord::TaskHacker.modify('db:test:clone_structure', 'test', 'postgis') do |config_|
+::RGeo::ActiveRecord::TaskHacker.modify('db:test:clone_structure', 'test', 'postgresql') do |config_|
   ::ENV['PGHOST'] = config_["host"] if config_["host"]
   ::ENV['PGPORT'] = config_["port"].to_s if config_["port"]
   ::ENV['PGPASSWORD'] = config_["password"].to_s if config_["password"]
@@ -140,7 +140,7 @@ end
 end
 
 
-::RGeo::ActiveRecord::TaskHacker.modify('db:test:purge', 'test', 'postgis') do |config_|
+::RGeo::ActiveRecord::TaskHacker.modify('db:test:purge', 'test', 'postgresql') do |config_|
   ::ActiveRecord::Base.clear_active_connections!
   drop_database(config_)
   create_database(config_)

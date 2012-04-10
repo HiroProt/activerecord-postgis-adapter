@@ -55,7 +55,7 @@ module Arel
 
     end
 
-    VISITORS['postgis'] = ::Arel::Visitors::PostGIS
+    VISITORS['postgresql'] = ::Arel::Visitors::PostGIS
 
   end
 end
